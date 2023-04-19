@@ -1,0 +1,99 @@
+<script>
+    if (!(sessionStorage.getItem('userType') === 'administrator')) {
+        let addressNet = location.href.substring(0, location.href.substring(0, location.href.lastIndexOf("/")).lastIndexOf("/"));
+        location.replace(addressNet);
+    }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../css/administrator.css">
+    <script src="../js/administrator.js"></script>
+    <title>administrator</title>
+</head>
+
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="nav">
+        <h3>Library Management System Administartor Page</h3>
+        <span class="bx bx-log-out"></span>
+    </div>
+
+    <!-- 主体部分 -->
+    <div class="body">
+        <!-- 左侧边用户资料和功能区 -->
+        <div class="userAndFunction">
+            <!-- 用户个人资料 -->
+            <div class="user">
+                <img src="../uploads/sishu.jpg" alt="" class="img">
+                Administartor
+            </div>
+
+
+
+            <!-- 功能区 -->
+            <div class="function">
+                <ul>
+                    <li>Add New Account</li>
+                    <li>Delete Account</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 右侧边内容显示区 -->
+        <div class="content">
+            <div class="content-body">
+                <ul>
+                    <li>account 1<span class="bx bx-x-circle"></span></li>
+                    <li>account 2<span class="bx bx-x-circle"></span></li>
+                    <li>account 3<span class="bx bx-x-circle"></span></li>
+                    <li>account 4<span class="bx bx-x-circle"></span></li>
+                    <li>account 5<span class="bx bx-x-circle"></span></li>
+                    <li>account 6<span class="bx bx-x-circle"></span></li>
+                </ul>
+            </div>
+
+            <input type="search" name="key" class="search" placeholder="search">
+
+            <div class="paging">
+                <div class="page">&lt;</div>
+                <div class="pages">
+                    <ul>
+                        <li>
+                            <div class="page">1</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="page">&gt;</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="addNewAccount">
+        <span class="bx bx-x"></span>
+
+        <form action="users/addNewAccount">
+            <input type="text" name="realname" placeholder="name">
+            <input type="text" name="username" placeholder="username">
+            <input type="password" name="password" placeholder="password">
+            <select name="typeName">
+                <option value="none">select user type</option>
+                <option value="benefactor">benefactor</option>
+                <option value="staff">staff</option>
+            </select>
+            <div class="button">
+                <input type="reset" value="reset">
+                <input type="submit" value="create">
+            </div>
+
+        </form>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,199 @@
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  box-sizing: border-box;
+}
+html {
+  width: 100%;
+  height: 100%;
+}
+html body {
+  width: 100%;
+  height: 100%;
+  background: url('../images/loginBackgroundImage.jpg');
+  background-size: 100% 100%;
+}
+html body .nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 10px;
+  width: 100%;
+  height: 10%;
+  background-color: rgba(120, 199, 230, 0.5);
+  border-radius: 5px;
+  line-height: 50px;
+}
+html body .nav .bx {
+  margin-right: 20px;
+  font-size: 30px;
+  cursor: pointer;
+}
+html body .body {
+  display: flex;
+  height: 87%;
+}
+html body .body .userAndFunction {
+  margin-left: 10px;
+  width: 25%;
+}
+html body .body .userAndFunction .user {
+  margin-bottom: 10px;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+html body .body .userAndFunction .user img {
+  margin: 20px 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid black;
+  cursor: pointer;
+}
+html body .body .userAndFunction .function li {
+  margin-bottom: 10px;
+  height: 50px;
+  background-color: purple;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+html body .body .userAndFunction .function li:hover {
+  transform: scale(0.9);
+}
+html body .body .content {
+  position: relative;
+  margin-left: 10px;
+  width: 72%;
+  height: 100%;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+html body .body .content .content-body ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+html body .body .content .content-body ul li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+  padding: 0 10px;
+  width: 95%;
+  height: 60px;
+  box-shadow: 0 2px #b3b2b2;
+  line-height: 60px;
+}
+html body .body .content .content-body ul li .bx {
+  display: none;
+  font-size: 20px;
+  color: red;
+}
+html body .body .content .search {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  width: 8%;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 0;
+  border-radius: 5px;
+  color: grey;
+  transition: all 0.2s;
+}
+html body .body .content .search:focus {
+  width: 15%;
+  transform: scale(1.3) translateX(20px);
+}
+html body .body .content .paging {
+  position: absolute;
+  display: flex;
+  justify-content: space-around;
+  right: 10px;
+  bottom: 5px;
+  height: 5%;
+}
+html body .body .content .paging .page {
+  margin: 0 10px;
+  width: 25px;
+  height: 25px;
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  line-height: 25px;
+  border-radius: 5px;
+  color: grey;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+html body .body .content .paging .page:hover {
+  transform: scale(0.8);
+}
+html body .addNewAccount {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 50%;
+  height: 70%;
+  background-color: rgba(128, 128, 128, 0.9);
+  border-radius: 7px;
+  transform: translate(-50%, -50%) scale(0);
+  transition: all 0.2s;
+}
+html body .addNewAccount span {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 25px;
+}
+html body .addNewAccount form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+html body .addNewAccount form input {
+  margin: 10px 0;
+  padding: 0 20px;
+  width: 50%;
+  height: 15%;
+  outline: none;
+  border: 0;
+  border-radius: 10px;
+  background-color: white;
+  color: grey;
+  font-size: 18px;
+}
+html body .addNewAccount form select {
+  margin-top: 10px;
+  padding: 0 20px;
+  width: 50%;
+  height: 15%;
+  outline: none;
+  border: 0;
+  border-radius: 10px;
+  color: grey;
+  font-size: 18px;
+}
+html body .addNewAccount form .button {
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+html body .addNewAccount form .button input {
+  margin: 0 15px;
+  width: 20%;
+  height: 30px;
+}

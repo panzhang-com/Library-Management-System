@@ -1,0 +1,88 @@
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  box-sizing: border-box;
+}
+html {
+  width: 100%;
+  height: 100%;
+}
+html body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-image: url(../images/loginBackgroundImage.jpg);
+  background-size: 100% 100%;
+}
+html body h3 {
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+html body .loginForm {
+  background-color: rgba(17, 1, 1, 0.4);
+  width: 28%;
+  height: 60%;
+  border-radius: 5px;
+}
+html body .loginForm form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+html body .loginForm form input {
+  margin: 10px 0;
+  padding: 0 20px;
+  width: 75%;
+  height: 15%;
+  border: 0;
+  background-color: rgba(251, 247, 247, 0.7);
+  outline: none;
+  border-radius: 25px;
+}
+html body .loginForm form .username:focus {
+  transform: scale(1.1);
+}
+html body .loginForm form .password:focus {
+  transform: scale(1.1);
+}
+html body .loginForm form .reset:hover {
+  transform: scale(0.9);
+}
+html body .loginForm form .submit:hover {
+  transform: scale(0.9);
+}
+html body .loginForm form .username {
+  transition: all 0.5s;
+}
+html body .loginForm form .password {
+  transition: all 0.5s;
+}
+html body .loginForm form .submit {
+  width: 60%;
+  height: 10%;
+  font-size: 18px;
+  color: #5a5858;
+  transition: all 0.2s;
+}
+html body .loginForm form .reset {
+  width: 60%;
+  height: 10%;
+  font-size: 18px;
+  color: #5a5858;
+  transition: all 0.2s;
+}
+html body .loginForm form select {
+  position: fixed;
+  right: 100px;
+  top: 20px;
+  height: 22px;
+  background-color: rgba(251, 247, 247, 0.7);
+  outline: none;
+}
