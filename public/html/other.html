@@ -1,6 +1,6 @@
 <script>
     if (!sessionStorage.getItem('userType')) {
-        location.replace('http://localhost:3000/');
+        location.replace('http://' + location.host + ':' + location.port);
     }
 </script>
 
