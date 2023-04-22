@@ -11,8 +11,8 @@ window.addEventListener('load', () => {
     const newAccountSubmit = document.querySelector('.button').children[1];
     // 添加新账户的页面元素里的表单元素数组
     const formItems = addNewAccount.querySelectorAll('input');
-    // 展示账户li 的 ul
-    const accounts = document.querySelector('.content-body').querySelector('ul');
+    // 展示账户信息的框架页面数组
+    const infoFrames = document.querySelectorAll('.frame');
     // 分页元素li 的 ul
     const pages = document.querySelector('.pages').querySelector('ul');
     // 详细账户信息界面
@@ -21,6 +21,7 @@ window.addEventListener('load', () => {
     let accountNumber;
     // 要展示的账户对象数组
     let accountsPerPage;
+    let that;
 
 
     // 页面打开时默认发送的请求，第一页账户信息和总共的页数
@@ -76,41 +77,7 @@ window.addEventListener('load', () => {
                     }
 
                     // 将数据展示在页面上
-                    let that;
-                    accountsPerPage.forEach(account => {
-                        let _account = document.createElement('div');
-
-                        _account.className = 'libox';
-                        _account.setAttribute('data-id', account.id);
-                        _account.setAttribute('data-name', account.name);
-                        _account.setAttribute('data-username', account.username);
-                        _account.setAttribute('data-password', account.password);
-                        _account.setAttribute('data-uesrType', account.userType);
-                        _account.innerHTML = `<li><div class="simInfo"><div class="id">${account.id}</div><div class="username">${account.username}</div></div><span class="bx bx-x-circle"></span></li>`;
-                        accounts.appendChild(_account);
-
-                        _account.children[0].addEventListener('mousedown', function () {
-                            this.style.transform = 'rotateX(25deg) scale(0.9)';
-                            that = this;
-                        });
-
-                        document.documentElement.addEventListener('mouseup', function () {
-                            that.style.transform = '';
-
-                            // 打开详细界面
-                            // 所有需要填写的信息项
-                            const infosInTd = detailInfo.querySelectorAll('.info');
-                            // 所有真实数据项集合
-                            const infosInAttribute = that.parentNode.dataset;
-
-                            let i = 0;
-                            for (key in infosInAttribute) {
-                                infosInTd[i++].innerText = infosInAttribute[key];
-                            }
-
-                            detailInfo.style.display = 'flex';
-                        });
-                    });
+                    
 
                 }).catch(error => {
                     loadlogo.style.opacity = '0';
@@ -125,36 +92,36 @@ window.addEventListener('load', () => {
         }
 
         // 将第一页数据展示在页面上
-        let that = null;
-        accountsPerPage.forEach(account => {
-            let _account = document.createElement('div');
+        let i = 0;
+        accountsPerPage.forEach(_account => {
+            let account = document.createElement('div');
+            account.className = 'info';
+            account.setAttribute('data-id', _account.id);
+            account.setAttribute('data-name', _account.name);
+            account.setAttribute('data-username', _account.username);
+            account.setAttribute('data-password', _account.password);
+            account.setAttribute('data-userType', _account.userType);
+            account.innerHTML = `<div class="id">${_account.id}</div><div class="username">${_account.username}</div><span class="bx bx-x-circle"></span>`;
 
-            _account.className = 'libox';
-            _account.setAttribute('data-id', account.id);
-            _account.setAttribute('data-name', account.name);
-            _account.setAttribute('data-username', account.username);
-            _account.setAttribute('data-password', account.password);
-            _account.setAttribute('data-uesrType', account.userType);
-            _account.innerHTML = `<li><div class="simInfo"><div class="id">${account.id}</div><div class="username">${account.username}</div></div><span class="bx bx-x-circle"></span></li>`;
-            accounts.appendChild(_account);
+            infoFrames[i++].appendChild(account);
 
-            _account.children[0].addEventListener('mousedown', function () {
-                this.style.transform = 'rotateX(25deg) scale(0.9)';
+            setTimeout(() => {
+                account.style.marginLeft = '0';
+            }, 50 * i);
+
+            account.addEventListener('mousedown', function () {
+                this.style.transform = 'rotateX(30deg) scale(0.9)';
                 that = this;
             });
 
             document.documentElement.addEventListener('mouseup', function () {
                 that.style.transform = '';
 
-                // 打开详细界面
-                // 所有需要填写的信息项
-                const infosInTd = detailInfo.querySelectorAll('.info');
-                // 所有真实数据项集合
-                const infosInAttribute = that.parentNode.dataset;
-
-                let i = 0;
-                for (key in infosInAttribute) {
-                    infosInTd[i++].innerText = infosInAttribute[key];
+                const infodata = that.dataset;
+                const infoblank = detailInfo.querySelectorAll('.info');
+                let j = 0;
+                for (key in infodata) {
+                    infoblank[j++].innerText= infodata[key];
                 }
 
                 detailInfo.style.display = 'flex';
@@ -166,7 +133,8 @@ window.addEventListener('load', () => {
         if (error.code === 'ERR_BAD_REQUEST') {
             alert('404 not found');
         } else {
-            alert('net error');
+            console.log(error);
+            // alert('net error');
         }
     });
 
@@ -273,13 +241,13 @@ window.addEventListener('load', () => {
     functionButtons[1].addEventListener('click', function () {
         if (this.innerText === 'Delete Account') {
             for (let i = 0; i < accounts.children.length; i++) {
-                accounts.children[i].querySelector('span').style.display = 'block';
+
             }
 
             this.innerText = 'OK';
         } else if (this.innerText === 'OK') {
             for (let i = 0; i < accounts.children.length; i++) {
-                accounts.children[i].querySelector('span').style.display = 'none';
+
             }
 
             this.innerText = 'Delete Account';
