@@ -34,8 +34,8 @@
             <!-- 功能区 -->
             <div class="function">
                 <ul>
-                    <li>Add New Account</li>
-                    <li>Delete Account</li>
+                    <li class="addButton">Add New Account</li>
+                    <li class="deleteButton">Delete Account</li>
                 </ul>
             </div>
         </div>
@@ -43,6 +43,7 @@
         <!-- 右侧边内容显示区 -->
         <div class="content">
             <div class="content-body">
+
                 <div class="frame">
 
                     <!-- <div class="info">
@@ -64,11 +65,13 @@
 
             <div class="paging">
                 <div class="page">&lt;</div>
+
                 <div class="pages">
                     <ul>
-                        <li></li>
+                        <!-- <li></li> -->
                     </ul>
                 </div>
+
                 <div class="page">&gt;</div>
             </div>
         </div>
@@ -79,11 +82,11 @@
         <span class="bx bx-x"></span>
 
         <form action="users/addNewAccount">
-            <input type="text" name="realname" placeholder="name">
-            <input type="text" name="username" placeholder="username">
-            <input type="password" name="password" placeholder="password">
+            <input type="text" name="realname" placeholder="name" class="dataItem">
+            <input type="text" name="username" placeholder="username" class="dataItem">
+            <input type="password" name="password" placeholder="password" class="dataItem">
 
-            <select name="typeName">
+            <select name="typeName" class="dataItem">
                 <option value="none" selected>select user type</option>
                 <option value="patron">patron</option>
                 <option value="staff">staff</option>

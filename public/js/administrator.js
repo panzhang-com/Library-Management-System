@@ -1,259 +1,302 @@
-window.addEventListener('load', () => {
-    // 导航栏元素
-    const nav = document.querySelector('.nav');
-    // 功能区按钮元素数组
-    const functionButtons = document.querySelector('.function').querySelectorAll('li');
-    // 添加新账户的页面元素
-    const addNewAccount = document.querySelector('.addNewAccount');
-    // 加载logo
-    const loadlogo = document.querySelector('.loadlogo');
-    // 添加新账户的页面元素里的提交按钮
-    const newAccountSubmit = document.querySelector('.button').children[1];
-    // 添加新账户的页面元素里的表单元素数组
-    const formItems = addNewAccount.querySelectorAll('input');
-    // 展示账户信息的框架页面数组
-    const infoFrames = document.querySelectorAll('.frame');
-    // 分页元素li 的 ul
-    const pages = document.querySelector('.pages').querySelector('ul');
-    // 详细账户信息界面
-    const detailInfo = document.querySelector('.detailInfo');
-    // 账户总数
-    let accountNumber;
-    // 要展示的账户对象数组
-    let accountsPerPage;
-    let that;
+// 封装发送请求对象
+class SendRequest {
+    constructor() {
+        this.loadlogo = document.querySelector('.loadlogo');
+    }
 
+    // 发送get请求
+    sendGETRequest(_url, _data, _operation) {
+        this.loadlogo.style.opacity = '0.8';
 
-    // 页面打开时默认发送的请求，第一页账户信息和总共的页数
-    loadlogo.style.opacity = '0.8';
-    axios({
-        method: 'GET',
+        axios({
+            method: 'GET',
 
-        url: '/administrator/',
+            url: _url,
 
-        params: {
-            pageSize: 6
-        },
+            params: _data,
 
-        timeout: 2000
-    }).then(response => {
-        loadlogo.style.opacity = '0';
-
-        ({ accountNumber, accounts: accountsPerPage } = response.data);
-
-        // 创建分页
-        for (let i = 1; i <= accountNumber / 6 + 1; i++) {
-            let page = document.createElement('li');
-
-            if (i === 1) {
-                page.innerHTML = `<div class="page current">${i}</div>`;
-            } else {
-                page.innerHTML = `<div class="page">${i}</div>`;
-            }
-
-            pages.appendChild(page);
-
-            page.addEventListener('click', function () {
-                loadlogo.style.opacity = '0.8';
-
-                axios({
-                    method: 'GET',
-
-                    url: '/administrator/page',
-
-                    params: {
-                        page: this.children[0].innerText,
-                        pageSize: 6
-                    },
-
-                    timeout: 2000
-                }).then(response => {
-                    loadlogo.style.opacity = '0';
-
-                    ({ accounts: accountsPerPage } = response.data);
-
-                    for (let i = 0; i < accounts.children.length; i++) {
-                        accounts.removeChild(accounts.children[i]);
-                    }
-
-                    // 将数据展示在页面上
-                    
-
-                }).catch(error => {
-                    loadlogo.style.opacity = '0';
-
-                    if (error.code === 'ERR_BAD_REQUEST') {
-                        alert('404 not found');
-                    } else {
-                        alert('net error');
-                    }
-                });
-            });
-        }
-
-        // 将第一页数据展示在页面上
-        let i = 0;
-        accountsPerPage.forEach(_account => {
-            let account = document.createElement('div');
-            account.className = 'info';
-            account.setAttribute('data-id', _account.id);
-            account.setAttribute('data-name', _account.name);
-            account.setAttribute('data-username', _account.username);
-            account.setAttribute('data-password', _account.password);
-            account.setAttribute('data-userType', _account.userType);
-            account.innerHTML = `<div class="id">${_account.id}</div><div class="username">${_account.username}</div><span class="bx bx-x-circle"></span>`;
-
-            infoFrames[i++].appendChild(account);
-
-            setTimeout(() => {
-                account.style.marginLeft = '0';
-            }, 50 * i);
-
-            account.addEventListener('mousedown', function () {
-                this.style.transform = 'rotateX(30deg) scale(0.9)';
-                that = this;
-            });
-
-            document.documentElement.addEventListener('mouseup', function () {
-                that.style.transform = '';
-
-                const infodata = that.dataset;
-                const infoblank = detailInfo.querySelectorAll('.info');
-                let j = 0;
-                for (key in infodata) {
-                    infoblank[j++].innerText= infodata[key];
-                }
-
-                detailInfo.style.display = 'flex';
-            });
-        });
-    }).catch(error => {
-        loadlogo.style.opacity = '0';
-
-        if (error.code === 'ERR_BAD_REQUEST') {
-            alert('404 not found');
-        } else {
+            timeout: 2000
+        }).then(response => {
+            this.loadlogo.style.opacity = '0';
+            _operation(response.data);
+        }).catch(error => {
+            this.loadlogo.style.opacity = '0';
             console.log(error);
-            // alert('net error');
+        });
+    }
+
+    // 发送post请求
+    sendPOSTRequest(_url, _data, _operation) {
+        this.loadlogo.style.opacity = '0.8';
+
+        axios({
+            method: 'POST',
+
+            url: _url,
+
+            data: JSON.stringify(_data),
+
+            timeout: 2000
+        }).then(response => {
+            this.loadlogo.style.opacity = '0';
+            _operation(response.data);
+        }).catch(error => {
+            this.loadlogo.style.opacity = '0';
+            console.log(error);
+        });
+    }
+}
+
+// 封装修改展示页面内容和分页的函数
+function changeShowPageContent({ accountNumber, accounts }) {
+    let infoFrames = document.querySelectorAll('.frame');
+    let pages = document.querySelector('.pages').querySelector('ul');
+
+    // 修改展示页面
+    infoFrames.forEach(infoFrame => {
+        if (infoFrame.children.length !== 0) {
+            infoFrame.removeChild(infoFrame.children[0]);
         }
     });
 
-    // 退出系统
-    nav.querySelector('span').addEventListener('click', function () {
-        let addressNet = 'http://' + location.host;
-        console.log(addressNet);
-        location.replace(addressNet);
-        sessionStorage.removeItem('userType');
+    let i = 0;
+    accounts.forEach(_account => {
+        let account = document.createElement('div');
+
+        account.className = 'info';
+        account.innerHTML = `<div class="id">${_account.id}</div><div class="username">${_account.username}</div><span class="bx bx-x-circle"></span>`;
+
+        account.setAttribute('data-id', _account.id);
+        account.setAttribute('data-name', _account.name);
+        account.setAttribute('data-username', _account.username);
+        account.setAttribute('data-password', _account.password);
+        account.setAttribute('data-userType', _account.userType);
+
+        infoFrames[i++].appendChild(account);
     });
 
-    // 打开添加账户页面
-    functionButtons[0].addEventListener('click', function () {
-        addNewAccount.style.transform = 'translate(-50%, -50%) scale(1)';
-    });
+    // 更改分页
+    while (pages.children.length !== 0) {
+        pages.removeChild(pages.children[0]);
+    }
 
-    // 添加新账户提交按钮
-    newAccountSubmit.addEventListener('click', function (e) {
+    for (let j = 1; j <= accountNumber / 6 + 1; j++) {
+        let page = document.createElement('li');
+
+        page.className = 'page';
+        page.innerHTML = `${j}`;
+
+        pages.appendChild(page);
+    }
+}
+
+// 封装功能对象
+// 1. 封装退出账号功能对象
+class ExitAccount {
+    constructor() {
+        this.exitButton = document.querySelector('.bx-log-out');
+
+        this.init();
+    }
+
+    init() {
+        this.exitButton.addEventListener('click', this.exit);
+    }
+
+    exit() {
+        window.location.replace(`http://${window.location.host}`);
+    }
+}
+
+// 2. 封装初始化账户内容显示页面对象
+class InitAccountContent {
+    constructor() {
+        this.search = document.querySelector('.search');
+
+        this.sendRequest = new SendRequest();
+
+        this.init();
+    }
+
+    init() {
+        // 打开页面时向服务器请求第一页数据和账户总数
+        // 并创建分页，将信息显示在页面上
+        this.sendRequest.sendGETRequest('/administrator/', {
+            page: 1,
+            pageSize: 6,
+            searchKey: this.search.value
+        }, changeShowPageContent);
+    }
+}
+
+// 3. 封装添加账户功能
+let AddNewAccountThat;
+class AddNewAccount {
+    constructor() {
+        this.addNewAccountButton = document.querySelector('.addButton');
+        this.addPage = document.querySelector('.addNewAccount');
+        this.closeAddPageButton = this.addPage.querySelector('.bx-x');
+        this.dataItems = this.addPage.querySelectorAll('.dataItem');
+        this.submitButton = this.addPage.querySelector('.button').children[1];
+        this.search = document.querySelector('.search');
+
+        this.sendRequest = new SendRequest();
+
+        AddNewAccountThat = this;
+        this.init();
+    }
+
+    init() {
+        this.addNewAccountButton.addEventListener('click', this.showAddPage);
+
+        this.closeAddPageButton.addEventListener('click', this.closeAddPage);
+
+        this.submitButton.addEventListener('click', this.submit);
+    }
+
+    showAddPage() {
+        for (let i = 0; i < AddNewAccountThat.dataItems.length; i++) {
+            AddNewAccountThat.dataItems[i].style.border = '0';
+            if (i === AddNewAccountThat.dataItems.length - 1) {
+                AddNewAccountThat.dataItems[i].children[0].selected = true;
+            } else {
+                AddNewAccountThat.dataItems[i].value = '';
+            }
+        }
+
+        AddNewAccountThat.addPage.style.transform = 'translate(-50%, -50%) scale(1)';
+    }
+
+    closeAddPage() {
+        AddNewAccountThat.addPage.style.transform = 'translate(-50%, -50%) scale(0)';
+    }
+
+    submit(e) {
         e.preventDefault();
 
-        loadlogo.style.opacity = '0.8';
-
-        // 向后端发送请求
-        let _name = formItems[0].value;
-        let _username = formItems[1].value;
-        let _password = formItems[2].value;
-        let _userType = addNewAccount.querySelector('select').value;
-
         let flag = true;
-
-        for (let i = 0; i < 3; i++) {
-            if (formItems[i].value === '') {
-                formItems[i].style.border = '2px solid red';
+        AddNewAccountThat.dataItems.forEach(dataItem => {
+            if (dataItem.value === '' || dataItem.value === 'none') {
                 flag = false;
+                dataItem.style.border = '2px solid red';
             } else {
-                formItems[i].style.border = '0';
+                dataItem.style.border = '0';
             }
-        }
-
-        if (_userType === "none") {
-            addNewAccount.querySelector('select').style.border = '2px solid red';
-            flag = false;
-        } else {
-            addNewAccount.querySelector('select').style.border = '0';
-        }
+        });
 
         if (flag) {
-            axios({
-                method: 'POST',
+            let _name = AddNewAccountThat.dataItems[0].value;
+            let _username = AddNewAccountThat.dataItems[1].value;
+            let _passowrd = AddNewAccountThat.dataItems[2].value;
+            let _userType = AddNewAccountThat.dataItems[3].value;
 
-                url: '/administrator/addNewAccount',
+            AddNewAccountThat.sendRequest.sendPOSTRequest('/administrator/addNewAccount', {
+                name: _name,
+                username: _username,
+                password: _passowrd,
+                userType: _userType,
+                page: 1,
+                pageSize: 6,
+                searchKey: AddNewAccountThat.search.value
+            }, AddNewAccountThat.responseHandle);
+        }
+    }
 
-                data: JSON.stringify({
-                    name: _name,
-                    username: _username,
-                    password: _password,
-                    userType: _userType
-                }),
+    responseHandle(data) {
+        let { state } = data;
 
-                timeout: 2000
-            }).then(response => {
-                loadlogo.style.opacity = '0';
+        if (state === 1) {
+            AddNewAccountThat.addPage.style.transform = 'translate(-50%, -50%) scale(0)';
+            alert('success');
+        } else {
+            alert('faile');
+        }
 
-                if (response.data.state === 1) {
-                    alert('sueccess');
-                    // 将新账户添加到账户内容中
-                    // 
-                    // 
-                    // 
-                    // 
-                    // 
-                    //
-                } else {
-                    alert('faile');
-                }
-            }).catch(error => {
-                loadlogo.style.opacity = '0';
+        changeShowPageContent(data);
+    }
+}
 
-                if (error.code === 'ERR_BAD_REQUEST') {
-                    alert('404 not found');
-                } else {
-                    alert('net error');
+// 4. 封装删除账户功能 (事件委托)
+let DeleteAccountThat;
+class DeleteAccount {
+    constructor() {
+        this.deleteButton = document.querySelector('.deleteButton');
+        this.infoFrames = document.querySelectorAll('.frame');
+        this.search = document.querySelector('.search');
+
+        this.sendRequest = new SendRequest();
+
+        DeleteAccountThat = this;
+        this.init();
+    }
+
+    init() {
+        this.deleteButton.addEventListener('click', this.showDeleIcon);
+
+        this.infoFrames.forEach(infoFrame => {
+            infoFrame.addEventListener('click', DeleteAccountThat.delete);
+        });
+    }
+
+    showDeleIcon() {
+        if (this.innerText === 'Delete Account') {
+            this.innerText = 'OK';
+            DeleteAccountThat.infoFrames.forEach(infoFrame => {
+                if (infoFrame.querySelector('span') !== null) {
+                    infoFrame.querySelector('span').style.display = 'block';
                 }
             });
         } else {
-            loadlogo.style.opacity = '0';
-        }
-    });
-
-    // 关闭添加账户页面
-    addNewAccount.querySelector('span').addEventListener('click', function () {
-        for (let i = 0; i < 3; i++) {
-            formItems[i].value = '';
-            formItems[i].style.border = '0';
-        }
-
-        addNewAccount.querySelector('select').querySelectorAll('option')[0].selected = true;
-        addNewAccount.querySelector('select').style.border = '0';
-
-        addNewAccount.style.transform = 'translate(-50%, -50%) scale(0)';
-    });
-
-    // 打开或关闭删除账户按钮
-    functionButtons[1].addEventListener('click', function () {
-        if (this.innerText === 'Delete Account') {
-            for (let i = 0; i < accounts.children.length; i++) {
-
-            }
-
-            this.innerText = 'OK';
-        } else if (this.innerText === 'OK') {
-            for (let i = 0; i < accounts.children.length; i++) {
-
-            }
-
             this.innerText = 'Delete Account';
+            DeleteAccountThat.infoFrames.forEach(infoFrame => {
+                if (infoFrame.querySelector('span') !== null) {
+                    infoFrame.querySelector('span').style.display = 'none';
+                }
+            });
         }
-    });
+    }
 
-    // 点击账户条目，打开详细信息
+    delete(e) {
+        if (e.target === this.querySelector('span')) {
+            DeleteAccountThat.sendRequest.sendGETRequest('/administrator/deleteAccount', {
+                id: this.children[0].getAttribute('data-id'),
+                page: 1,
+                pageSzie: 6,
+                searchKey: DeleteAccountThat.search.value
+            }, DeleteAccountThat.responseHandle);
+        }
+    }
 
+    responseHandle(data) {
+        let { state } = data;
+
+        if (state === 1) {
+            alert('success');
+        } else {
+            alert('faile');
+        }
+
+        changeShowPageContent(data);
+
+        DeleteAccountThat.infoFrames.forEach(infoFrame => {
+            if (infoFrame.querySelector('span') !== null) {
+                infoFrame.querySelector('span').style.display = 'block';
+            }
+        });
+    }
+}
+
+// 5. 查看详细信息功能 (事件委托)
+
+// 6. 搜索功能
+
+
+window.addEventListener('load', () => {
+    new ExitAccount(); // 退出账号
+
+    new InitAccountContent(); // 初始化账户显示页面
+
+    new AddNewAccount(); // 添加账户功能
+
+    new DeleteAccount(); // 删除账户功能
 });
