@@ -34,7 +34,7 @@ router.get('/', function (request, response, next) {
 
     setTimeout(() => {
         response.send(JSON.stringify(data));
-    }, 1000);
+    }, 0);
 });
 
 router.get('/page', function (request, response, next) {
@@ -68,10 +68,10 @@ router.get('/page', function (request, response, next) {
 
     setTimeout(() => {
         response.send(JSON.stringify(data));
-    }, 1000);
+    }, 0);
 });
 
-router.get('/deleteAccount', function (request, response, next   ) {
+router.get('/deleteAccount', function (request, response, next) {
     let data = {
         state: 1,
 
@@ -106,7 +106,33 @@ router.get('/deleteAccount', function (request, response, next   ) {
 
     setTimeout(() => {
         response.send(JSON.stringify(data));
-    }, 1000);
+    }, 0);
+});
+
+router.get('/switchPage', function (request, response, next) {
+    let data = {
+        accountNumber: 20,
+
+        accounts: [
+            {
+                id: 000001,
+                name: 'zhangsan',
+                username: 'zhangsan',
+                password: '000000',
+                userType: 'staff'
+            },
+
+            {
+                id: 000002,
+                name: 'lisi',
+                username: 'lisi',
+                password: '000000',
+                userType: 'patron'
+            }
+        ]
+    }
+
+    response.send(JSON.stringify(data));
 });
 
 router.post('/addNewAccount', function (request, response, next) {
@@ -152,7 +178,7 @@ router.post('/addNewAccount', function (request, response, next) {
                 }
             ]
         }));
-    }, 1000);
+    }, 0);
 });
 
 

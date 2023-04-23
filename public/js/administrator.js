@@ -109,12 +109,15 @@ class ExitAccount {
 }
 
 // 2. 封装初始化账户内容显示页面对象
+let InitAccountContentThat;
 class InitAccountContent {
     constructor() {
         this.search = document.querySelector('.search');
+        this.pages = document.querySelector('.pages').querySelector('ul');
 
         this.sendRequest = new SendRequest();
 
+        InitAccountContentThat = this;
         this.init();
     }
 
@@ -125,7 +128,13 @@ class InitAccountContent {
             page: 1,
             pageSize: 6,
             searchKey: this.search.value
-        }, changeShowPageContent);
+        }, this.responseHandle);
+    }
+
+    responseHandle(data) {
+        changeShowPageContent(data);
+
+        InitAccountContentThat.pages.children[0].className = 'page current';
     }
 }
 
@@ -139,6 +148,8 @@ class AddNewAccount {
         this.dataItems = this.addPage.querySelectorAll('.dataItem');
         this.submitButton = this.addPage.querySelector('.button').children[1];
         this.search = document.querySelector('.search');
+        this.pages = document.querySelector('.pages').querySelector('ul');
+        this.currentPage;
 
         this.sendRequest = new SendRequest();
 
@@ -185,6 +196,15 @@ class AddNewAccount {
         });
 
         if (flag) {
+            // 获取当前页码
+            if (AddNewAccountThat.pages.children.length !== 0) {
+                AddNewAccountThat.pages.children.forEach(page => {
+                    if (page.className === 'page current') {
+                        AddNewAccountThat.currentPage = parseInt(page.innerHTML);
+                    }
+                });
+            }
+
             let _name = AddNewAccountThat.dataItems[0].value;
             let _username = AddNewAccountThat.dataItems[1].value;
             let _passowrd = AddNewAccountThat.dataItems[2].value;
@@ -195,7 +215,7 @@ class AddNewAccount {
                 username: _username,
                 password: _passowrd,
                 userType: _userType,
-                page: 1,
+                page: AddNewAccountThat.currentPage,
                 pageSize: 6,
                 searchKey: AddNewAccountThat.search.value
             }, AddNewAccountThat.responseHandle);
@@ -213,6 +233,8 @@ class AddNewAccount {
         }
 
         changeShowPageContent(data);
+
+        AddNewAccountThat.pages.children[AddNewAccountThat.currentPage - 1].className = 'page current';
     }
 }
 
@@ -223,6 +245,9 @@ class DeleteAccount {
         this.deleteButton = document.querySelector('.deleteButton');
         this.infoFrames = document.querySelectorAll('.frame');
         this.search = document.querySelector('.search');
+        this.infoFrames = document.querySelectorAll('.frame');
+        this.pages = document.querySelector('.pages').querySelector('ul');
+        this.currentPage;
 
         this.sendRequest = new SendRequest();
 
@@ -258,9 +283,25 @@ class DeleteAccount {
 
     delete(e) {
         if (e.target === this.querySelector('span')) {
+            // 获取当前页码
+            DeleteAccountThat.pages.children.forEach(page => {
+                if (page.className === 'page current') {
+                    if (page.innerHTML === '1') {
+                        DeleteAccountThat.currentPage = parseInt(page.innerHTML);
+                    } else {
+                        if (DeleteAccountThat.infoFrames[1].children.length === 0) {
+                            DeleteAccountThat.currentPage = parseInt(page.innerHTML) - 1;
+                        } else {
+                            DeleteAccountThat.currentPage = parseInt(page.innerHTML);
+                        }
+                    }
+                }
+            });
+
+
             DeleteAccountThat.sendRequest.sendGETRequest('/administrator/deleteAccount', {
                 id: this.children[0].getAttribute('data-id'),
-                page: 1,
+                page: DeleteAccountThat.currentPage,
                 pageSzie: 6,
                 searchKey: DeleteAccountThat.search.value
             }, DeleteAccountThat.responseHandle);
@@ -283,13 +324,85 @@ class DeleteAccount {
                 infoFrame.querySelector('span').style.display = 'block';
             }
         });
+
+        DeleteAccountThat.pages.children[DeleteAccountThat.currentPage - 1].className = 'page current';
     }
 }
 
 // 5. 查看详细信息功能 (事件委托)
 
-// 6. 搜索功能
 
+
+
+// 6. 搜索功能
+let SearchThat;
+class Search {
+    constructor() {
+        this.search = document.querySelector('.search');
+        this.pages = document.querySelector('.pages').querySelector('ul');
+
+        this.sendRequest = new SendRequest();
+
+        SearchThat = this;
+        this.init();
+    }
+
+    init() {
+        this.search.addEventListener('keyup', this.sendSearchRequest);
+    }
+
+    sendSearchRequest(e) {
+        if (e.key === 'Enter') {
+            //  发送请求
+
+
+
+
+
+
+
+
+
+        }
+    }
+}
+
+// 7. 切换分页功能
+let SwitchPageThat;
+class SwitchPage {
+    constructor() {
+        this.pages = document.querySelector('.pages').querySelector('ul');
+        this.search = document.querySelector('.search');
+        this.currentPage;
+
+        this.sendRequest = new SendRequest();
+
+        SwitchPageThat = this;
+        this.init();
+    }
+
+    init() {
+        this.pages.addEventListener('click', this.switchPage);
+    }
+
+    switchPage(e) {
+        if (e.target !== SwitchPageThat.pages) {
+            SwitchPageThat.currentPage = parseInt(e.target.innerHTML);
+    
+            SwitchPageThat.sendRequest.sendGETRequest('/administrator/switchPage', {
+                page: SwitchPageThat.currentPage,
+                pageSize: 6,
+                searchKey: SwitchPageThat.search.value
+            }, SwitchPageThat.responseHandle);
+        }
+    }
+
+    responseHandle(data) {
+        changeShowPageContent(data);
+
+        SwitchPageThat.pages.children[SwitchPageThat.currentPage - 1].className = 'page current';
+    }
+}
 
 window.addEventListener('load', () => {
     new ExitAccount(); // 退出账号
@@ -299,4 +412,8 @@ window.addEventListener('load', () => {
     new AddNewAccount(); // 添加账户功能
 
     new DeleteAccount(); // 删除账户功能
+
+    new SwitchPage(); // 切换分页功能
+
+    new Search(); // 搜索功能
 });
